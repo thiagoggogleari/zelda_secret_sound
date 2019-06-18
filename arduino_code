@@ -1,0 +1,65 @@
+//When button is pressed, secret sound is played.
+
+//Based on https://www.arduino.cc/en/Tutorial/toneMelody
+// Zelda Secret Sound - Thiago Ogleari
+// ▲   
+//▲▲ 
+
+#define NOTE_GS4 415
+#define NOTE_A4  440
+#define NOTE_DS5 622
+#define NOTE_E5  659
+#define NOTE_FS5 740
+#define NOTE_G5  784
+#define NOTE_GS5 831
+#define NOTE_C6  1047
+#define REST      0
+
+#define button 2 // Button pin 
+
+int tempo = 120; // Speed of music
+int buzzer = 3; // Buzzer pin 
+
+int melody[] = {
+
+NOTE_G5,11,
+NOTE_FS5,14,
+NOTE_DS5,14,
+NOTE_A4,11,
+NOTE_GS4,14,
+NOTE_E5,11,
+NOTE_GS5,14,
+NOTE_C6,9,
+   
+};
+
+int notes = sizeof(melody) / sizeof(melody[0]) / 2;
+int wholenote = (60000 * 4) / tempo;
+int divider = 0, noteDuration = 0;
+
+void setup(){
+  pinMode(button, INPUT);
+}
+
+void secret() {
+  int statebutton = digitalRead(button);
+  if (statebutton == HIGH){
+  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+    divider = melody[thisNote + 1];
+    if (divider > 0) {
+      noteDuration = (wholenote) / divider;
+    } else if (divider < 0) { 
+      noteDuration = (wholenote) / abs(divider);
+      noteDuration *= 1.5;
+    }
+    tone(buzzer, melody[thisNote], noteDuration*0.9);
+    delay(noteDuration);
+    noTone(buzzer);
+  }
+  }
+}
+
+void loop() {
+  secret(); 
+  
+}
